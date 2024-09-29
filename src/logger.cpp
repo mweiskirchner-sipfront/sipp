@@ -398,15 +398,12 @@ int TRACE_SHORTMSG(const char* fmt, ...)
     return ret;
 }
 
-int LOG_MSG(const char* fmt, ...)
+int LOG_MSG(struct timeval *currentTime, const char* cid, const char* fmt, const char *msg)
 {
-    int ret;
-    va_list ap;
-
-    va_start(ap, fmt);
-    ret = _trace(&log_lfi, fmt, ap);
-    va_end(ap);
-
+    int ret=0;
+#ifdef USE_MQTT
+    print_log_mqtt(currentTime, cid, msg);
+#endif
     return ret;
 }
 

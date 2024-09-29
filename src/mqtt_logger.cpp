@@ -281,3 +281,74 @@ void print_message_mqtt(struct timeval *currentTime, const char* cid, const char
         WARNING("MQTT: failed to publish printed message: %s\n", mosquitto_strerror(ret));
     }
 }
+
+void print_log_mqtt(struct timeval *currentTime, const char* cid, const char *msg)  {
+    std::stringstream jsonData;
+    std::string strbuf = do_replace(std::string(msg), "\r?\n", "\\r\\n");
+    strbuf = do_replace(strbuf, "\"", "\\\"");
+
+    if (!mqtt_ready) {
+        WARNING("MQTT: print_log_mqtt: mqtt not read\n");
+        return; 
+    }
+
+    if (mqtt_handler == NULL) {
+        WARNING("MQTT: print_log_mqtt: mqtt_handler == NULL\n");
+        return;
+    }
+
+    jsonData
+        << "{"
+        << JQC(CurrentTime, CStat::formatTime(currentTime, true))
+        << JQC(CallId, cid);
+
+    jsonData
+        << JQV(Message, strbuf);
+
+    std::string jsonDataStr = jsonData.str();
+    jsonDataStr += "}\n";
+
+    int ret = mosquitto_publish(mqtt_handler, NULL, mqtt_log_topic,
+            jsonDataStr.length(), jsonDataStr.c_str(),
+            mqtt_pub_qos, false);
+    if (ret != MOSQ_ERR_SUCCESS && !quitting) {
+        WARNING("MQTT: print_log_mqtt: failed to publish log message: %s\n", mosquitto_strerror(ret));
+    }
+
+}
+
+// not used yet
+void print_warning_mqtt(struct timeval *currentTime, const char* cid, const char *msg) {
+    std::stringstream jsonData;
+    std::string strbuf = do_replace(std::string(msg), "\r?\n", "\\r\\n");
+    strbuf = do_replace(strbuf, "\"", "\\\"");
+
+    if (!mqtt_ready) {
+        WARNING("MQTT: print_warning_mqtt: mqtt not read\n");
+        return; 
+    }
+
+    if (mqtt_handler == NULL) {
+        WARNING("MQTT: print_warning_mqtt: mqtt_handler == NULL\n");
+        return;
+    }
+
+    jsonData
+        << "{"
+        << JQC(CurrentTime, CStat::formatTime(currentTime, true))
+        << JQC(CallId, cid);
+
+    jsonData
+        << JQV(Message, strbuf);
+
+    std::string jsonDataStr = jsonData.str();
+    jsonDataStr += "}\n";
+
+    int ret = mosquitto_publish(mqtt_handler, NULL, mqtt_warning_topic,
+            jsonDataStr.length(), jsonDataStr.c_str(),
+            mqtt_pub_qos, false);
+    if (ret != MOSQ_ERR_SUCCESS && !quitting) {
+        WARNING("MQTT: print_warning_mqtt: failed to publish warning message: %s\n", mosquitto_strerror(ret));
+    }
+
+}

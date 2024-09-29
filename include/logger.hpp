@@ -96,7 +96,8 @@ void print_error_codes_file(FILE* f);
 int TRACE_MSG(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
 int TRACE_CALLDEBUG(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
 int TRACE_SHORTMSG(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
-int LOG_MSG(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
+
+int LOG_MSG(struct timeval *currentTime, const char* cid, const char* fmt, const char *msg);
 
 int TRACE_MSG_PARTS(struct timeval *currentTime, const char* cid, const char* direction, const char *transport, const char *sock_type, ssize_t msg_size, const char *msg);
 

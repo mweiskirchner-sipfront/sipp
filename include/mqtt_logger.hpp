@@ -28,4 +28,7 @@ void print_errors_mqtt(int fatal, bool use_errno, int error, const char *fmt, va
 
 void print_message_mqtt(struct timeval *currentTime, const char* cid, const char* direction, const char *transport, const char *sock_type, ssize_t msg_size, const char *msg);
 
+void print_log_mqtt(struct timeval *currentTime, const char* cid, const char *msg);
+void print_warning_mqtt(struct timeval *currentTime, const char* cid, const char *msg);
+
 #endif /* __SIPP_MQTT_LOGGER_H__ */

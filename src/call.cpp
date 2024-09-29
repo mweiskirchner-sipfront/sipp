@@ -3739,8 +3739,12 @@ call::T_ActionResult call::executeAction(const char* msg, message* curmsg)
             }
             M_callVariableTable->getVar(currentAction->getVarId())->setString(str);
         } else if (currentAction->getActionType() == CAction::E_AT_LOG_TO_FILE) {
+
+            struct timeval currentTime;
+            GET_TIME(&currentTime);
+
             char* x = createSendingMessage(currentAction->getMessage(), -2 /* do not add crlf*/);
-            LOG_MSG("%s\n", x);
+            LOG_MSG(&currentTime, id, "%s\n", x);
         } else if (currentAction->getActionType() == CAction::E_AT_LOG_WARNING) {
             char* x = createSendingMessage(currentAction->getMessage(), -2 /* do not add crlf*/);
             WARNING("%s", x);
