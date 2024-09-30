@@ -402,7 +402,10 @@ int LOG_MSG(struct timeval *currentTime, const char* cid, const char* fmt, const
 {
     int ret=0;
 #ifdef USE_MQTT
-    print_log_mqtt(currentTime, cid, msg);
+    // only when '-trace_logs'
+    if (useLogf) {
+        print_log_mqtt(currentTime, cid, msg);
+    }
 #endif
     return ret;
 }
